@@ -26,5 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UrbanRenewalSeeder::class);
         // User management seeds
         $this->call(\Database\Seeders\UserManagementSeeder::class);
+        // RBAC sample data (roles & permissions)
+        $this->call(\Database\Seeders\RbacSeeder::class);
     }
 }
