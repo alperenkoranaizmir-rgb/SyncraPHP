@@ -9,27 +9,39 @@ class UnitPolicy
 {
     public function viewAny(User $user)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('units.viewAny')) {
+            return true;
+        }
+        return $user->projects()->exists();
     }
 
     public function view(User $user, Unit $unit)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('units.view')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $unit->project_id)->exists();
     }
 
     public function create(User $user)
     {
-        return true;
+        return method_exists($user, 'hasPermission') && $user->hasPermission('units.create');
     }
 
     public function update(User $user, Unit $unit)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('units.update')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $unit->project_id)->exists();
     }
 
     public function delete(User $user, Unit $unit)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('units.delete')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $unit->project_id)->exists();
     }
 }
 <?php

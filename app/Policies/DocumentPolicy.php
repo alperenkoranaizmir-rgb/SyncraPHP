@@ -9,27 +9,39 @@ class DocumentPolicy
 {
     public function viewAny(User $user)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('documents.viewAny')) {
+            return true;
+        }
+        return $user->projects()->exists();
     }
 
     public function view(User $user, Document $doc)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('documents.view')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $doc->project_id)->exists();
     }
 
     public function create(User $user)
     {
-        return true;
+        return method_exists($user, 'hasPermission') && $user->hasPermission('documents.create');
     }
 
     public function update(User $user, Document $doc)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('documents.update')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $doc->project_id)->exists();
     }
 
     public function delete(User $user, Document $doc)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('documents.delete')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $doc->project_id)->exists();
     }
 }
 <?php

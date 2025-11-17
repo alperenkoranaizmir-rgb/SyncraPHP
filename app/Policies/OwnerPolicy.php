@@ -9,27 +9,39 @@ class OwnerPolicy
 {
     public function viewAny(User $user)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('owners.viewAny')) {
+            return true;
+        }
+        return $user->projects()->exists();
     }
 
     public function view(User $user, Owner $owner)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('owners.view')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $owner->project_id)->exists();
     }
 
     public function create(User $user)
     {
-        return true;
+        return method_exists($user, 'hasPermission') && $user->hasPermission('owners.create');
     }
 
     public function update(User $user, Owner $owner)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('owners.update')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $owner->project_id)->exists();
     }
 
     public function delete(User $user, Owner $owner)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('owners.delete')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $owner->project_id)->exists();
     }
 }
 <?php

@@ -9,27 +9,41 @@ class ProjectPolicy
 {
     public function viewAny(User $user)
     {
-        return true;
+        // allow if user has an overarching admin permission
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('projects.viewAny')) {
+            return true;
+        }
+        // otherwise allow if user belongs to any project
+        return $user->projects()->exists();
     }
 
     public function view(User $user, Project $project)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('projects.view')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $project->id)->exists();
     }
 
     public function create(User $user)
     {
-        return true;
+        return method_exists($user, 'hasPermission') && $user->hasPermission('projects.create');
     }
 
     public function update(User $user, Project $project)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('projects.update')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $project->id)->exists();
     }
 
     public function delete(User $user, Project $project)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('projects.delete')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $project->id)->exists();
     }
 }
 <?php

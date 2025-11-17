@@ -9,27 +9,39 @@ class DecisionPolicy
 {
     public function viewAny(User $user)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('decisions.viewAny')) {
+            return true;
+        }
+        return $user->projects()->exists();
     }
 
     public function view(User $user, Decision $decision)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('decisions.view')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $decision->project_id)->exists();
     }
 
     public function create(User $user)
     {
-        return true;
+        return method_exists($user, 'hasPermission') && $user->hasPermission('decisions.create');
     }
 
     public function update(User $user, Decision $decision)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('decisions.update')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $decision->project_id)->exists();
     }
 
     public function delete(User $user, Decision $decision)
     {
-        return true;
+        if (method_exists($user, 'hasPermission') && $user->hasPermission('decisions.delete')) {
+            return true;
+        }
+        return $user->projects()->where('projects.id', $decision->project_id)->exists();
     }
 }
 <?php
