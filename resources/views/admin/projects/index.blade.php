@@ -7,6 +7,17 @@
 @stop
 
 @section('content')
+    @if(session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <div class="mb-3">
+      <a href="{{ route('admin.projects.create') }}" class="btn btn-sm btn-primary">Yeni Proje</a>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-striped">

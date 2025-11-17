@@ -42,4 +42,5 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/projects/{project}/edit', [ProjectAdminController::class,'edit'])->name('admin.projects.edit')->middleware('project');
     Route::put('/projects/{project}', [ProjectAdminController::class,'update'])->name('admin.projects.update')->middleware('project');
     Route::delete('/projects/{project}', [ProjectAdminController::class,'destroy'])->name('admin.projects.destroy')->middleware('project');
+    Route::post('/projects/{project}/export', [ProjectAdminController::class,'export'])->name('admin.projects.export')->middleware('project');
 });

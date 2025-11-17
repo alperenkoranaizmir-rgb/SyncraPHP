@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class EnsureProjectAccess
 {
@@ -17,6 +18,10 @@ class EnsureProjectAccess
         }
 
         if ($projectId) {
+            // If a Model was bound, convert to its primary key
+            if ($projectId instanceof Model) {
+                $projectId = $projectId->getKey();
+            }
             // store resolved project id for later use
             $request->attributes->set('current_project_id', $projectId);
             session(['current_project_id' => $projectId]);

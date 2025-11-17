@@ -59,4 +59,15 @@ class ProjectAdminController extends Controller
         $project->delete();
         return redirect()->route('admin.projects.index')->with('success','Proje silindi');
     }
+
+    public function export(Project $project)
+    {
+        // Reuse API controller export method and redirect to returned download url
+        $resp = app(\App\Http\Controllers\Api\DocumentController::class)->exportProjectDocuments($project);
+        $data = $resp->getData(true);
+        if (isset($data['download_url'])) {
+            return redirect($data['download_url']);
+        }
+        return redirect()->route('admin.projects.show', $project)->with('error', $data['message'] ?? 'Export failed');
+    }
 }

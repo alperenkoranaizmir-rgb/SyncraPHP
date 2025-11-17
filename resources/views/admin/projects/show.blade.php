@@ -7,6 +7,13 @@
 @stop
 
 @section('content')
+    @if(session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <p><strong>Başlangıç:</strong> {{ $project->start_date }}</p>
@@ -41,10 +48,12 @@
                 <button class="btn btn-sm btn-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
               </form>
 
-              <form method="POST" action="{{ url('/api/projects/'.$project->id.'/documents/export') }}" style="display:inline-block; margin-left:8px">
-                @csrf
-                <button class="btn btn-sm btn-secondary">Belgeleri ZIP olarak indir</button>
-              </form>
+              @if(auth()->check() && (auth()->user()->hasPermission('proje.dokuman.export') || auth()->user()->hasPermission('proje.yonetim')))
+                <form method="POST" action="{{ route('admin.projects.export', $project) }}" style="display:inline-block; margin-left:8px">
+                  @csrf
+                  <button class="btn btn-sm btn-secondary">Belgeleri ZIP olarak indir</button>
+                </form>
+              @endif
             </div>
         </div>
     </div>
