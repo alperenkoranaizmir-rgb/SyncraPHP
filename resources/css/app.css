@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* AdminLTE overrides can go here if needed */
+/* You can also import AdminLTE css in JS entry */

@@ -1,0 +1,26 @@
+{% extends 'resources/adminlte_templates/base.html' %}
+{% block content %}
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Advanced Forms</h3></div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Select2</label>
+        <select class="form-control select2" style="width: 100%;">
+          <option selected="selected">Option 1</option>
+          <option>Option 2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Input Mask</label>
+        <input class="form-control" data-inputmask="\"mask\": \"999-999-9999\"" data-mask>
+      </div>
+      <div class="form-group">
+        <label>Colorpicker</label>
+        <input type="text" class="form-control my-colorpicker1">
+      </div>
+    </div>
+  </div>
+  <script>
+    // Note: requires Select2, InputMask, Colorpicker plugins present in /vendor/adminlte/plugins
+  </script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'resources/adminlte_templates/base.html' %}
+{% block content %}
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Navbar Examples</h3></div>
+    <div class="card-body">
+      <p>Üst navbar bileşen örnekleri (arama, bildirim, profil):</p>
+      <nav class="navbar navbar-expand navbar-light bg-white">
+        <a class="navbar-brand" href="#">Brand</a>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="far fa-bell"></i> <span class="badge badge-warning">3</span></a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">User <i class="fas fa-caret-down"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Sign out</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+{% endblock %}
