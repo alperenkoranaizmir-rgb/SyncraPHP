@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->boolean('tapu_haciz')->default(false);
             $table->json('tapu_raw_json')->nullable();
             $table->string('usage_status')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->index(['project_id','unit_no']);
         });

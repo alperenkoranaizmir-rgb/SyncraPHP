@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @mixin \Tests\TestCase
+ */
+
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Document;
@@ -7,6 +11,7 @@ use App\Models\ProjectUser;
 use Illuminate\Support\Facades\Storage;
 
 it('admin can export project documents and is redirected to download url', function () {
+    /** @var \Tests\TestCase $this */
     config(['auth.guards.web' => ['driver' => 'session', 'provider' => 'users']]);
 
     $user = User::factory()->create();

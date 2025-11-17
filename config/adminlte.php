@@ -315,6 +315,18 @@ return [
             'type' => 'sidebar-menu-search',
             'text' => 'search',
         ],
+        // Custom application links
+        ['header' => 'Kentsel Dönüşüm'],
+        [
+            'text' => 'Projeler',
+            'url'  => 'admin/projects',
+            'icon' => 'fas fa-project-diagram',
+        ],
+        [
+            'text' => 'Kullanıcılar',
+            'url'  => 'admin/users',
+            'icon' => 'fas fa-users',
+        ],
         [
             'text' => 'blog',
             'url' => 'admin/blog',

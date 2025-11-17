@@ -8,6 +8,7 @@ use App\Jobs\CheckDecisionMajorityJob;
 use App\Models\Decision;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DecisionController extends Controller
 {
@@ -20,19 +21,20 @@ class DecisionController extends Controller
     public function store(StoreDecisionRequest $request, Project $project)
     {
         $data = $request->validated();
-        $data['project_id'] = $project->id;
-        $data['created_by_user_id'] = auth()->id();
+        $projectId = $project->getKey();
+        $data['project_id'] = $projectId;
+        $data['created_by_user_id'] = Auth::id();
         $decision = Decision::create($data);
 
         // create signature placeholders for owners
         foreach ($project->owners as $owner) {
-            $decision->signatures()->create(['owner_id' => $owner->id]);
+            $decision->signatures()->create(['owner_id' => $owner->getKey()]);
         }
 
         // dispatch majority check
-        CheckDecisionMajorityJob::dispatch($decision->id);
+        CheckDecisionMajorityJob::dispatch($decision->getKey());
 
-        return response()->json($decision,201);
+        return response()->json($decision, 201);
     }
 
     public function show(Project $project, Decision $decision)

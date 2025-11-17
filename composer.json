@@ -4,7 +4,8 @@
   "require": {
     "php": "^8.2",
     "laravel/framework": "^12.0",
-    "fakerphp/faker": "^1.24"
+    "fakerphp/faker": "^1.24",
+    "jeroennoten/laravel-adminlte": "^3.15"
   },
   "autoload": {
     "psr-4": {
@@ -20,6 +21,14 @@
   },
   "require-dev": {
     "laravel/dusk": "^8.3",
-    "phpunit/phpunit": "^12.4"
+    "phpunit/phpunit": "^12.4",
+    "pestphp/pest": "^4.1",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "mockery/mockery": "^1.6"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }

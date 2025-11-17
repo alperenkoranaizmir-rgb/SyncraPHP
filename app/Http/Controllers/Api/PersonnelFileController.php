@@ -7,6 +7,7 @@ use App\Models\PersonnelFile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PersonnelFileController extends Controller
 {
@@ -23,7 +24,7 @@ class PersonnelFileController extends Controller
             'file' => 'required|file|max:51200',
         ]);
 
-        $path = $request->file('file')->store('user_'.$user->id,'personnel');
+        $path = $request->file('file')->store('user_'.$user->getKey(), 'personnel');
 
         $pf = PersonnelFile::create([
             'user_id' => $user->id,
@@ -41,8 +42,10 @@ class PersonnelFileController extends Controller
     {
         // return download URL
         $path = $personel_dosyalari->dosya_yolu;
-        if (Storage::disk('personnel')->exists($path)) {
-            return Storage::disk('personnel')->download($path);
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk('personnel');
+        if ($disk->exists($path)) {
+            return $disk->download($path);
         }
         return response()->json(['message'=>'Not found'],404);
     }

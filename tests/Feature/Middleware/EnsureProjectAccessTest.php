@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @mixin \Tests\TestCase
+ */
+
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +21,8 @@ it('sets current_project_id from bound project model', function () {
         ]);
     })->middleware('project');
 
-    $resp = $this->actingAs($user, 'sanctum')->getJson('/__test-project/' . $project->id);
+        /** @var \Tests\TestCase $this */
+        $resp = $this->actingAs($user, 'sanctum')->getJson('/__test-project/' . $project->id);
     $resp->assertStatus(200);
     $resp->assertJson(['attr' => $project->id, 'session' => $project->id]);
 });
@@ -34,7 +39,8 @@ it('reads current_project_id from X-Project-Id header when provided', function (
         ]);
     })->middleware('project');
 
-    $resp = $this->actingAs($user, 'sanctum')->getJson('/__test-header', ['X-Project-Id' => $project->id]);
+        /** @var \Tests\TestCase $this */
+        $resp = $this->actingAs($user, 'sanctum')->getJson('/__test-header', ['X-Project-Id' => $project->id]);
     $resp->assertStatus(200);
     $resp->assertJson(['attr' => $project->id, 'session' => $project->id]);
 });

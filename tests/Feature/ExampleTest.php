@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @mixin \Tests\TestCase
+ */
+
 it('returns a successful response', function () {
     $status = $this->get('/')->status();
 

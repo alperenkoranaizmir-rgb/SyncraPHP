@@ -8,6 +8,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
@@ -30,12 +31,12 @@ class DocumentController extends Controller
         foreach ($request->file('files', []) as $file) {
             $path = $file->store('documents', 'projects');
             $doc = Document::create([
-                'project_id' => $project->id,
+                'project_id' => $project->getKey(),
                 'unit_id' => $request->input('unit_id'),
                 'owner_id' => $request->input('owner_id'),
                 'doc_type' => $request->input('doc_type'),
                 'file_path' => $path,
-                'uploaded_by_user_id' => $request->user()->id ?? null,
+                'uploaded_by_user_id' => $request->user()?->id ?? Auth::id(),
                 'uploaded_at' => now(),
             ]);
             $uploaded[] = $doc;
@@ -51,6 +52,7 @@ class DocumentController extends Controller
             return response()->json(['message' => 'Not found'],404);
         }
 
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
         $disk = Storage::disk('projects');
         if ($disk->exists($document->file_path)) {
             // if using s3: temporaryUrl, else download
@@ -71,7 +73,7 @@ class DocumentController extends Controller
         $files = $project->documents()->pluck('file_path')->toArray();
         if (empty($files)) return response()->json(['message'=>'No documents'],400);
 
-        $tmpZip = storage_path('app/projects/exports/project_'.$project->id.'_'.time().'.zip');
+        $tmpZip = storage_path('app/projects/exports/project_'.$project->getKey().'_'.time().'.zip');
         @mkdir(dirname($tmpZip), 0755, true);
 
         $zip = new ZipArchive();

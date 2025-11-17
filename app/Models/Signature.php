@@ -9,7 +9,15 @@ use App\Traits\HasProjectScope;
 class Signature extends Model
 {
     use HasFactory, HasProjectScope;
-    protected $guarded = [];
+
+    protected $fillable = [
+        'decision_id','owner_id','signed','signed_at'
+    ];
+
+    protected $casts = [
+        'signed' => 'boolean',
+        'signed_at' => 'datetime',
+    ];
 
     public function decision()
     {

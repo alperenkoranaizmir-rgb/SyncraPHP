@@ -25,5 +25,14 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->bound('router')) {
             $this->app['router']->aliasMiddleware('project', EnsureProjectAccess::class);
         }
+
+        // Ensure AdminLTE view namespace is available when package views are published
+        // Some composer operations may remove the original package provider; map the
+        // published views to the `adminlte` namespace so blade calls like
+        // `adminlte::page` continue to work.
+        $adminltePath = resource_path('views/vendor/adminlte');
+        if (is_dir($adminltePath)) {
+            $this->loadViewsFrom($adminltePath, 'adminlte');
+        }
     }
 }

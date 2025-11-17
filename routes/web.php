@@ -43,4 +43,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::put('/projects/{project}', [ProjectAdminController::class,'update'])->name('admin.projects.update')->middleware('project');
     Route::delete('/projects/{project}', [ProjectAdminController::class,'destroy'])->name('admin.projects.destroy')->middleware('project');
     Route::post('/projects/{project}/export', [ProjectAdminController::class,'export'])->name('admin.projects.export')->middleware('project');
+    // Decisions
+    Route::get('/projects/{project}/decisions', [\App\Http\Controllers\Admin\DecisionController::class,'index'])->name('admin.projects.decisions.index')->middleware('project');
+    Route::post('/projects/{project}/decisions', [\App\Http\Controllers\Admin\DecisionController::class,'store'])->name('admin.projects.decisions.store')->middleware('project');
+    Route::post('/decisions/{decision}/sign', [\App\Http\Controllers\Admin\DecisionController::class,'sign'])->name('admin.decisions.sign')->middleware('project');
 });

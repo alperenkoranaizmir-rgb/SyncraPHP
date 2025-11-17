@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @mixin \Tests\TestCase
+ */
+
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\User;
@@ -14,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 
 
 it('returns only projects assigned to the user when no global permission', function () {
+    /** @var \Tests\TestCase $this */
     // define a simple sanctum guard for the test runtime
     config(['auth.guards.sanctum' => ['driver' => 'session', 'provider' => 'users']]);
     $user = User::factory()->create();
@@ -32,6 +37,7 @@ it('returns only projects assigned to the user when no global permission', funct
 });
 
 it('forbids project creation for users without proje.yonetim permission', function () {
+    /** @var \Tests\TestCase $this */
     config(['auth.guards.sanctum' => ['driver' => 'session', 'provider' => 'users']]);
     $user = User::factory()->create();
     $resp = $this->actingAs($user, 'sanctum')->postJson('/api/projects', ['name' => 'NewProj']);
@@ -39,6 +45,7 @@ it('forbids project creation for users without proje.yonetim permission', functi
 });
 
 it('allows users with proje.yonetim permission to create projects', function () {
+    /** @var \Tests\TestCase $this */
     config(['auth.guards.sanctum' => ['driver' => 'session', 'provider' => 'users']]);
     $user = User::factory()->create();
 
@@ -81,6 +88,7 @@ it('calculates decision majority and marks decision tamamlandi when threshold re
 });
 
 it('exports project documents as zip when documents exist', function () {
+    /** @var \Tests\TestCase $this */
     Storage::fake('projects');
 
     config(['auth.guards.sanctum' => ['driver' => 'session', 'provider' => 'users']]);

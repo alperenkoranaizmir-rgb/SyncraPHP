@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class EnsureProjectAccess
 {
@@ -13,8 +14,8 @@ class EnsureProjectAccess
         // Resolve project id from route, header or session
         $projectId = $request->route('project') ?? $request->header('X-Project-Id') ?? session('current_project_id');
 
-        if (!$projectId && auth()->check() && property_exists(auth()->user(), 'current_project_id')) {
-            $projectId = auth()->user()->current_project_id;
+        if (!$projectId && Auth::check() && property_exists(Auth::user(), 'current_project_id')) {
+            $projectId = Auth::user()->current_project_id;
         }
 
         if ($projectId) {

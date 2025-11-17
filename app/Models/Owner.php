@@ -9,7 +9,15 @@ use App\Traits\HasProjectScope;
 class Owner extends Model
 {
     use HasFactory, HasProjectScope;
-    protected $guarded = [];
+
+    protected $fillable = [
+        'project_id','first_name','last_name','tc_no','father_name','birth_date','birth_place','gender','email','phone_primary','phone_secondary','address','emergency_contact_name','emergency_contact_phone','emergency_contact_address','education','employment_status','marital_status','photo_path','disability_flag','disability_type','disability_report_path'
+    ];
+
+    protected $casts = [
+        'disability_flag' => 'boolean',
+        'birth_date' => 'date',
+    ];
 
     public function project()
     {
@@ -18,7 +26,12 @@ class Owner extends Model
 
     public function units()
     {
-        return $this->belongsToMany(Unit::class, 'owner_unit')->withPivot('share_percent','owner_type');
+        return $this->belongsToMany(Unit::class, 'owner_unit')->withPivot('share_percent','owner_type')->withTimestamps();
+    }
+
+    public function ownerUnits()
+    {
+        return $this->hasMany(OwnerUnit::class);
     }
 
     public function documents()

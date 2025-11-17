@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('owner_id')->constrained('owners')->cascadeOnDelete();
             $table->foreignId('unit_id')->constrained('units')->cascadeOnDelete();
-            $table->decimal('share_percent', 8, 4)->default(0);
+            $table->decimal('share_percent', 5, 2)->default(0);
             $table->string('owner_type')->nullable();
             $table->timestamps();
             $table->unique(['owner_id','unit_id']);

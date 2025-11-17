@@ -9,7 +9,10 @@ use App\Traits\HasProjectScope;
 class Decision extends Model
 {
     use HasFactory, HasProjectScope;
-    protected $guarded = [];
+
+    protected $fillable = [
+        'project_id','title','description','created_by_user_id','status'
+    ];
 
     public function project()
     {
@@ -19,5 +22,10 @@ class Decision extends Model
     public function signatures()
     {
         return $this->hasMany(Signature::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
     }
 }
