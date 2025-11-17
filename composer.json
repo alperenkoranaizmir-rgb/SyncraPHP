@@ -3,7 +3,8 @@
   "description": "Minimal composer.json for local testing",
   "require": {
     "php": "^8.2",
-    "laravel/framework": "^12.0"
+    "laravel/framework": "^12.0",
+    "fakerphp/faker": "^1.24"
   },
   "autoload": {
     "psr-4": {
@@ -16,5 +17,9 @@
       "Database\\Factories\\": "database/factories/",
       "Tests\\": "tests/"
     }
+  },
+  "require-dev": {
+    "laravel/dusk": "^8.3",
+    "phpunit/phpunit": "^12.4"
   }
 }
