@@ -46,5 +46,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Decisions
     Route::get('/projects/{project}/decisions', [\App\Http\Controllers\Admin\DecisionController::class,'index'])->name('admin.projects.decisions.index')->middleware('project');
     Route::post('/projects/{project}/decisions', [\App\Http\Controllers\Admin\DecisionController::class,'store'])->name('admin.projects.decisions.store')->middleware('project');
+    Route::get('/projects/{project}/decisions/{decision}', [\App\Http\Controllers\Admin\DecisionController::class,'show'])->name('admin.projects.decisions.show')->middleware('project');
     Route::post('/decisions/{decision}/sign', [\App\Http\Controllers\Admin\DecisionController::class,'sign'])->name('admin.decisions.sign')->middleware('project');
 });

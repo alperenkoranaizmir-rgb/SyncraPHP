@@ -17,6 +17,7 @@
                         <th>#</th>
                         <th>Başlık</th>
                         <th>Durum</th>
+                        <th>% İmzalanma</th>
                         <th>Oluşturan</th>
                         <th>Tarih</th>
                         <th>İşlemler</th>
@@ -28,10 +29,16 @@
                             <td>{{ $d->id }}</td>
                             <td>{{ $d->title }}</td>
                             <td>{{ $d->status }}</td>
+                            <td style="min-width:180px;">
+                                <div class="progress" style="height:18px;">
+                                  <div class="progress-bar" role="progressbar" style="width: {{ round($d->percentage) }}%;" aria-valuenow="{{ round($d->percentage) }}" aria-valuemin="0" aria-valuemax="100">{{ round($d->percentage,1) }}%</div>
+                                </div>
+                                <small>{{ $d->signed_shares }} / {{ $d->total_shares }} pay</small>
+                            </td>
                             <td>{{ optional($d->creator)->name }}</td>
                             <td>{{ $d->created_at }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary">Detay</a>
+                                <a href="{{ route('admin.projects.decisions.show', ['project' => $projectId, 'decision' => $d->id]) }}" class="btn btn-sm btn-outline-primary">Detay</a>
                             </td>
                         </tr>
                     @endforeach

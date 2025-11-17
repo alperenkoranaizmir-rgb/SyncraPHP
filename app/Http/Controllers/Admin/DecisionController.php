@@ -15,7 +15,27 @@ class DecisionController extends Controller
     public function index($projectId)
     {
         $decisions = Decision::where('project_id', $projectId)->get();
+
+        // compute percentage for each decision using DecisionService
+        $service = new \App\Services\DecisionService();
+        $decisions = $decisions->map(function ($d) use ($service) {
+            $eval = $service->evaluateMajority($d);
+            $d->percentage = $eval['percentage'] ?? 0;
+            $d->signed_shares = $eval['signed_shares'] ?? 0;
+            $d->total_shares = $eval['total_shares'] ?? 0;
+            return $d;
+        });
+
         return view('admin.projects.decisions.index', compact('decisions', 'projectId'));
+    }
+
+    public function show($projectId, Decision $decision)
+    {
+        // load owners for the project and existing signatures
+        $owners = Owner::where('project_id', $projectId)->get();
+        $signatures = Signature::where('decision_id', $decision->id)->get()->keyBy('owner_id');
+
+        return view('admin.projects.decisions.show', compact('decision', 'owners', 'signatures', 'projectId'));
     }
 
     public function store(DecisionRequest $request, $projectId)
@@ -41,6 +61,9 @@ class DecisionController extends Controller
         // enqueue evaluation
         CheckDecisionMajorityJob::dispatch($decision);
 
-        return response()->json(['ok' => true, 'signature' => $signature]);
+        $service = new \App\Services\DecisionService();
+        $eval = $service->evaluateMajority($decision);
+
+        return response()->json(['ok' => true, 'signature' => $signature, 'eval' => $eval]);
     }
 }
