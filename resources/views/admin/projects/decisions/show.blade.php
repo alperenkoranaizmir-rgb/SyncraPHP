@@ -80,6 +80,32 @@
                     }).catch(console.error);
                 });
             });
+
+            // Real-time updates via Echo if configured
+            try {
+                if (window.Echo) {
+                    window.Echo.channel('project.{{ $decision->project_id }}')
+                        .listen('DecisionStatusChanged', function (e) {
+                            if (e.decision_id === {{ $decision->id }}) {
+                                // update progress if present
+                                var progress = document.querySelector('.decision-progress');
+                                if (progress && e.percentage !== undefined) {
+                                    var pct = Math.round(e.percentage);
+                                    progress.style.width = pct + '%';
+                                    progress.setAttribute('aria-valuenow', pct);
+                                    progress.textContent = pct + '%';
+                                }
+                                // Optionally update status badge on the page
+                                var statusEl = document.querySelector('.decision-status');
+                                if (statusEl && e.status) {
+                                    statusEl.textContent = e.status;
+                                }
+                            }
+                        });
+                }
+            } catch (err) {
+                console.warn('Echo not configured or error binding channel', err);
+            }
         });
     </script>
 @endsection

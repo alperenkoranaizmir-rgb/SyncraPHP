@@ -27,6 +27,13 @@ class CheckDecisionMajorityJob implements ShouldQueue
         // update decision status based on majority
         $this->decision->status = $res['passed'] ? 'kabul' : 'reddedildi';
         $this->decision->save();
+
+        // broadcast change so frontends can update in real-time (if Echo configured)
+        try {
+            event(new \App\Events\DecisionStatusChanged($this->decision, ['percentage' => $res['percentage']]));
+        } catch (\Throwable $e) {
+            // broadcasting is optional; swallow errors here
+        }
     }
 }
 

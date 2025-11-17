@@ -3,6 +3,78 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
+
+class DocumentController extends Controller
+{
+    public function exportProjectDocuments(Project $project)
+    {
+        $timestamp = now()->format('YmdHis');
+        $exportDir = storage_path('app/exports');
+        if (!is_dir($exportDir)) {
+            mkdir($exportDir, 0755, true);
+        }
+
+        $zipPath = $exportDir.'/project-'.$project->id.'-'.$timestamp.'.zip';
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE) !== true) {
+            return response()->json(['message' => 'Could not create zip file'], 500);
+        }
+
+        // add units CSV
+        $units = $project->units()->get()->toArray();
+        $unitsCsv = $exportDir.'/units-'.$project->id.'-'.$timestamp.'.csv';
+        $f = fopen($unitsCsv, 'w');
+        if ($f) {
+            if (count($units)) {
+                fputcsv($f, array_keys($units[0]));
+                foreach ($units as $row) fputcsv($f, $row);
+            }
+            fclose($f);
+            $zip->addFile($unitsCsv, 'units.csv');
+        }
+
+        // add owners CSV
+        $owners = $project->owners()->get()->toArray();
+        $ownersCsv = $exportDir.'/owners-'.$project->id.'-'.$timestamp.'.csv';
+        $f2 = fopen($ownersCsv, 'w');
+        if ($f2) {
+            if (count($owners)) {
+                fputcsv($f2, array_keys($owners[0]));
+                foreach ($owners as $row) fputcsv($f2, $row);
+            }
+            fclose($f2);
+            $zip->addFile($ownersCsv, 'owners.csv');
+        }
+
+        // add documents files from projects disk
+        $docs = $project->documents()->get();
+        foreach ($docs as $doc) {
+            if ($doc->file_path && Storage::disk('projects')->exists($doc->file_path)) {
+                $localPath = Storage::disk('projects')->path($doc->file_path);
+                $zip->addFile($localPath, 'documents/'.basename($doc->file_path));
+            }
+        }
+
+        $zip->close();
+
+        // make file available via storage/public/exports by moving it
+        $publicExports = storage_path('app/public/exports');
+        if (!is_dir($publicExports)) mkdir($publicExports, 0755, true);
+        $publicName = 'project-'.$project->id.'-'.$timestamp.'.zip';
+        copy($zipPath, $publicExports.'/'.$publicName);
+
+        $url = asset('storage/exports/'.$publicName);
+        return response()->json(['download_url' => $url]);
+    }
+}
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Project;
 use Illuminate\Http\Request;
