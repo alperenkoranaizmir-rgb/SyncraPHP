@@ -1,7 +1,9 @@
 version: '3.7'
 services:
   laravel-echo-server:
-    image: tlaverdure/laravel-echo-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.echo
     container_name: laravel-echo-server
     restart: unless-stopped
     ports:
@@ -10,4 +12,3 @@ services:
       - ./laravel-echo-server.json:/app/laravel-echo-server.json:ro
     environment:
       - NODE_ENV=production
-    command: ["laravel-echo-server", "start", "--config", "/app/laravel-echo-server.json"]
