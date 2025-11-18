@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  laravel-echo-server:
+    image: tlaverdure/laravel-echo-server:latest
+    container_name: laravel-echo-server
+    restart: unless-stopped
+    ports:
+      - "6001:6001"
+    volumes:
+      - ./laravel-echo-server.json:/app/laravel-echo-server.json:ro
+    environment:
+      - NODE_ENV=production
+    command: ["laravel-echo-server", "start", "--config", "/app/laravel-echo-server.json"]

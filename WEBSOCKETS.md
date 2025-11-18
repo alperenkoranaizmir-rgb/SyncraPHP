@@ -50,6 +50,8 @@ php artisan queue:restart
  Alternative (recommended): Soketi or laravel-echo-server
  - These are independent WebSocket servers that implement the Pusher protocol and do not require PHP packages or changes to your application's Composer dependencies.
  - Soketi (https://github.com/soketi/soketi) is a performant, actively maintained Rust/Node-compatible server with a simple Docker image. It speaks the Pusher protocol so your existing Echo client and `broadcast`/`pusher` driver configuration will work if you point the host/port to the Soketi instance.
+
+ - Laravel Echo Server (https://github.com/tlaverdure/laravel-echo-server) is a Node-based server that also implements the Pusher protocol. It is straightforward to run via Docker and integrates well with Laravel Echo as an on-prem alternative to Pusher.
  
  Quick Soketi setup (Docker Compose)
  
@@ -66,6 +68,21 @@ php artisan queue:restart
  Troubleshooting
  - Ensure `PUSHER_SCHEME` and `PUSHER_PORT` match the soketi listener (e.g. `http` + `6001` or `https` + `443`).
  - If running behind a reverse proxy (nginx), forward the WebSocket upgrade headers and use the TLS-terminating proxy for secure connections.
+
+Quick Laravel Echo Server setup (Docker Compose)
+
+1. A sample `docker-compose.echo.yml` and `laravel-echo-server.json` are provided in the repo. Start it with:
+
+	`docker compose -f docker-compose.echo.yml up -d`
+
+2. Update `.env` to point PUSHER_HOST/PORT to the echo server host/port (defaults in `.env.example` point to `127.0.0.1:6001`). Keep `BROADCAST_DRIVER=pusher`.
+
+3. To trigger an event over HTTP for testing (unauthenticated POST may be rejected depending on configuration), use the laravel-echo-server REST API (see server logs or docs). If authentication is required, create a small script that signs requests using the app `key`/`secret`.
+
+Why choose laravel-echo-server?
+ - Simple Docker image available; quick to bootstrap.
+ - Implements Pusher protocol — works with Laravel Echo and the `pusher` broadcast driver.
+ - Good for local development or small self-hosted deployments.
 
 - Öncelikle composer dependency uyumluluğunu kontrol edin. (Bu projede Laravel v12 / PHP 8.3 kullanılıyor; beyondcode paketinin bazı sürümleri Laravel 12 ile uyuşmayabilir.)
 - Eğer uyumlu sürüm bulunursa, şu komut ile yükleyin:
