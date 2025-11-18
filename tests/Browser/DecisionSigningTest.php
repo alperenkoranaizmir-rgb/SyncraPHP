@@ -14,7 +14,7 @@ class DecisionSigningTest extends DuskTestCase
     use DatabaseMigrations;
 
     /** @test */
-    public function admin_can_sign_a_decision_flow()
+    public function test_admin_can_sign_a_decision_flow()
     {
         // seed basic data
         $user = User::create(['name' => 'Dusk User', 'email' => 'dusk@example.com', 'password' => bcrypt('password')]);

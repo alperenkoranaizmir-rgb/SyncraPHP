@@ -31,8 +31,13 @@ class RbacSeeder extends Seeder
             // attach all permissions to admin role if pivot exists
             if (Schema::hasTable('permission_role')) {
                 $permIds = DB::table('permissions')->pluck('id')->toArray();
+                // resolve admin role id
+                $adminRole = DB::table('roles')->where('name', 'admin')->first();
+                $adminRoleIdVal = $adminRole->id ?? null;
                 foreach ($permIds as $pid) {
-                    DB::table('permission_role')->updateOrInsert(['permission_id' => $pid, 'role_id' => is_array($adminRoleId) ? $adminRoleId['id'] ?? null : $adminRoleId]);
+                    if ($adminRoleIdVal) {
+                        DB::table('permission_role')->updateOrInsert(['permission_id' => $pid, 'role_id' => $adminRoleIdVal]);
+                    }
                 }
             }
 
@@ -50,11 +55,27 @@ class RbacSeeder extends Seeder
 
         // Fallback: if no structured RBAC tables, create a simple seed in 'roles' and 'user_role' if present
         if (Schema::hasTable('roller') && Schema::hasTable('user_role')) {
-            DB::table('roller')->updateOrInsert(['rol_adi' => 'admin'], ['rol_adi' => 'admin', 'aciklama' => 'Yönetici']);
+            $rollerData = ['rol_adi' => 'admin'];
+            if (Schema::hasColumn('roller', 'aciklama')) {
+                $rollerData['aciklama'] = 'Yönetici';
+            }
+            DB::table('roller')->updateOrInsert(['rol_adi' => 'admin'], $rollerData);
             $firstUser = DB::table('users')->first();
             $role = DB::table('roller')->where('rol_adi', 'admin')->first();
             if ($firstUser && $role) {
                 DB::table('user_role')->updateOrInsert(['user_id' => $firstUser->id, 'rol_id' => $role->id], ['user_id' => $firstUser->id, 'rol_id' => $role->id]);
+            }
+
+            // if Turkish pivot 'rol_izin' exists, map some default izin names
+            if (Schema::hasTable('rol_izin') && Schema::hasTable('izinler')) {
+                $izinler = DB::table('izinler')->pluck('id','izin_adi')->toArray();
+                $roleId = $role->id ?? null;
+                $map = ['projects.view' => 'projects.view', 'decisions.manage' => 'decisions.manage'];
+                foreach ($map as $permName => $dummy) {
+                    if (isset($izinler[$permName]) && $roleId) {
+                        DB::table('rol_izin')->updateOrInsert(['rol_id' => $roleId, 'izin_id' => $izinler[$permName]]);
+                    }
+                }
             }
         }
     }
