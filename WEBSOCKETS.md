@@ -45,7 +45,27 @@ php artisan queue:restart
 
 ## Self-hosted (laravel-websockets)
 
-`beyondcode/laravel-websockets` paketinin mevcut sürümü, bu repo ile doğrudan uyumlu olmayabilir (illuminate paket sürümleri nedeniyle). Eğer self-hosted kullanmak istiyorsanız:
+ Eğer self-hosted kullanmak istiyorsanız:
+ 
+ Alternative (recommended): Soketi or laravel-echo-server
+ - These are independent WebSocket servers that implement the Pusher protocol and do not require PHP packages or changes to your application's Composer dependencies.
+ - Soketi (https://github.com/soketi/soketi) is a performant, actively maintained Rust/Node-compatible server with a simple Docker image. It speaks the Pusher protocol so your existing Echo client and `broadcast`/`pusher` driver configuration will work if you point the host/port to the Soketi instance.
+ 
+ Quick Soketi setup (Docker Compose)
+ 
+ 1. Create `docker-compose.soketi.yml` next to your `docker-compose.yml` (example provided in repo).
+ 2. Start soketi: `docker compose -f docker-compose.soketi.yml up -d`
+ 3. Update `.env` (see below examples) to point `PUSHER_HOST`/`PUSHER_PORT`/`PUSHER_SCHEME` to the soketi host.
+ 4. Keep `BROADCAST_DRIVER=pusher` and your existing `PUSHER_APP_ID`, `PUSHER_APP_KEY`, `PUSHER_APP_SECRET` values in `.env`. Soketi validates the app credentials.
+ 
+ Why use Soketi instead of `beyondcode` here?
+ - No Composer/framework changes required.
+ - Works with the Pusher protocol (Laravel Echo + pusher-js) out of the box.
+ - Easy to run via Docker or a small dedicated VM.
+ 
+ Troubleshooting
+ - Ensure `PUSHER_SCHEME` and `PUSHER_PORT` match the soketi listener (e.g. `http` + `6001` or `https` + `443`).
+ - If running behind a reverse proxy (nginx), forward the WebSocket upgrade headers and use the TLS-terminating proxy for secure connections.
 
 - Öncelikle composer dependency uyumluluğunu kontrol edin. (Bu projede Laravel v12 / PHP 8.3 kullanılıyor; beyondcode paketinin bazı sürümleri Laravel 12 ile uyuşmayabilir.)
 - Eğer uyumlu sürüm bulunursa, şu komut ile yükleyin:
